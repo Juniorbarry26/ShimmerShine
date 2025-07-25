@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, Principal{
     @Id
@@ -91,7 +91,8 @@ public class User implements UserDetails, Principal{
     }
 
 
-    public String fullName() {
+
+    public String getFullName() {
         return firstname + " " + lastname;
     }
 
