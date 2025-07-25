@@ -27,8 +27,8 @@ public class EmailService {
             String to,
             String username,
             EmailTemplateName emailTemplate,
-            String activationUrl,
-            String confirmationCode,
+            String confirmationUrl,
+            String activationCode,
             String subject
     ) throws MessagingException {
         String templateName;
@@ -48,8 +48,8 @@ public class EmailService {
         );
         Map<String, Object> properties = new HashMap<>();
         properties.put("username", username);
-        properties.put("activationUrl", activationUrl);
-        properties.put("confirmationCode", confirmationCode);
+        properties.put("confirmationUrl", confirmationUrl);
+        properties.put("activation_code", activationCode);
 
         Context context = new Context();
         context.setVariables(properties);
