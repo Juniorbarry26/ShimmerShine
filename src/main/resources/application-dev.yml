@@ -1,9 +1,13 @@
 spring:
+  application:
+    name: ShimmerShine
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/ShimmerShine
+    url: jdbc:postgresql://localhost:5433/ShimmerShine
     username: postgres
     password: Avond778@
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,25 +17,39 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    mail:
-      host: localhost
-      port: 1025
-      username: ali
-      password: ali
-      properties:
-        mail:
-          smtp:
-            trust: "*"
-          auth: true
+
+  mail:
+    host: mail-dev
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+          auth: false         # ✅ MailDev does not need authentication
           starttls:
-            enabled: true
+            enable: false     # ✅ MailDev does not support STARTTLS
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
 
-#application:
-#  security:
-#    jwt:
-#      secret-key: 6402a36aecb22d888c2257d1c0cdfa53397cf7f35bf2d248cf6e051a3b7068503ea479191dddf2fbffcebd3e239a3f9a8053c4170b918107cbbba0e2a027ef3c
-#      expiration: 86400000 #one day expiration
+springdoc:
+  default-produces-media-type: application/json
+
+server:
+  servlet:
+    context-path: /api/v1/
+
+application:
+  security:
+    jwt:
+      secret-key: 6402a36aecb22d888c2257d1c0cdfa53397cf7f35bf2d248cf6e051a3b7068503ea479191dddf2fbffcebd3e239a3f9a8053c4170b918107cbbba0e2a027ef3c
+      expiration: 86400000  # 1 day
+  mailing:
+    frontend:
+      activation-url: http://localhost:4200/activate-account
