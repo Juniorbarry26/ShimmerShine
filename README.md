@@ -87,11 +87,11 @@ Frontend will run on **http://localhost:4200/** and backend on **http://localhos
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST   | `/auth/register` | Register a new user |
-| POST   | `/auth/login` | Authenticate user & return JWT |
-| POST   | `/subscriptions/user/{userId}` | Create subscription for user |
-| GET    | `/cars/user/{userId}` | Get all cars for a user |
-| POST   | `/cars/user/{userId}` | Add a new car for a user |
+| POST   | `api/v1/auth/register` | Register a new user |
+| POST   | `api/v1/auth/login` | Authenticate user & return JWT |
+| POST   | `api/v1/subscriptions/user/{userId}` | Create subscription for user |
+| GET    | `api/v1/cars/user/{userId}` | Get all cars for a user |
+| POST   | `api/v1/cars/user/{userId}` | Add a new car for a user |
 
 ---
 
