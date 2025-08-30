@@ -46,7 +46,7 @@ public class AuthenticationService {
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .accountLocked(false)
                 .enabled(false)
                 .roles(List.of(userRole))
@@ -100,23 +100,20 @@ public class AuthenticationService {
         return stringBuilder.toString();
     }
     // Authenticate response
-    public AuthenticationResponse authenticate(AuthenticationRequest request)  {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var auth = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-            request.getEmail(),
-            request.getPassword()
-            )
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
 
         var claims = new HashMap<String, Object>();
-        var user =((User)auth.getPrincipal());
+        var user = ((User) auth.getPrincipal());
+        claims.put("fullName", user.getFullName());
 
-        claims.put("fullName",user.getFullName());
-
-        var jwtToken = jwtService.generateToken(claims, user);
-
-        return AuthenticationResponse
-                .builder()
+        var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
+        return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
     }
@@ -139,5 +136,7 @@ public class AuthenticationService {
         savedToken.setValidatedAt(LocalDateTime.now());
         tokenRepository.save(savedToken);
     }
+
+    // login to your account
 
 }

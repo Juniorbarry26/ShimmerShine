@@ -3,7 +3,7 @@ spring:
     name: ShimmerShine
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/ShimmerShine
+    url: jdbc:postgresql://localhost:5432/ShimmerShine
     username: postgres
     password: Avond778@
     driver-class-name: org.postgresql.Driver
