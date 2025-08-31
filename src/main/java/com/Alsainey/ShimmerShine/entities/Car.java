@@ -18,7 +18,7 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Many cars can belong to one user
+    @ManyToOne(fetch = FetchType.EAGER) // Many cars can belong to one user
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
