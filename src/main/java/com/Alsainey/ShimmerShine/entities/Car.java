@@ -18,6 +18,7 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @ManyToOne(fetch = FetchType.EAGER) // Many cars can belong to one user
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -35,5 +36,7 @@ public class Car {
 
     private Integer year;
 
+
     private String nickname;
+
 }
