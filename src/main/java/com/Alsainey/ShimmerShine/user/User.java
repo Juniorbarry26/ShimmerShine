@@ -38,7 +38,7 @@ public class User implements UserDetails, Principal{
     private boolean accountLocked;
     private boolean enabled;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -83,7 +83,7 @@ public class User implements UserDetails, Principal{
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
     @Override
     public boolean isEnabled() {
