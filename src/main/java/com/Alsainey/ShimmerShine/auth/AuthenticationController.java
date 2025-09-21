@@ -1,5 +1,6 @@
 package com.Alsainey.ShimmerShine.auth;
 
+import com.Alsainey.ShimmerShine.user.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,17 +20,17 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Register a new user",
             description = "Creates a new account and sends an activation email. " +
-                    "User must confirm their email before accessing protected resources."
+                    "Returns user details (excluding sensitive info)."
     )
-    public ResponseEntity<?> register(
+    public ResponseEntity<UserResponse> register(
             @RequestBody @Valid RegistrationRequest request
     ) throws MessagingException {
-        authenticationService.register(request);
-        return ResponseEntity.accepted().build();
+        UserResponse userResponse = authenticationService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
     @PostMapping("/authenticate")
@@ -49,13 +50,13 @@ public class AuthenticationController {
             summary = "Activate account",
             description = "Activates a newly registered user account using the token sent via email."
     )
-    public void confirm(
+    public ResponseEntity<String> confirm(
             @RequestParam String token
     ) throws MessagingException {
         authenticationService.activateAccount(token);
+        return ResponseEntity.ok("Account successfully activated.");
     }
 
-    // Example of a secured endpoint (if you add one later)
     @GetMapping("/me")
     @Operation(
             summary = "Get current user info",
