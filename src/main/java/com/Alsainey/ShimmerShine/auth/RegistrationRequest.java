@@ -1,7 +1,10 @@
 package com.Alsainey.ShimmerShine.auth;
 
+import com.Alsainey.ShimmerShine.entities.subscription.Subscription;
+import com.Alsainey.ShimmerShine.entities.subscription.enums.PlanName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,4 +27,7 @@ public class RegistrationRequest {
     @NotEmpty(message = "Password is mandatory")
     @Size(min = 8, message = "Password must be between 8 character long minimum")
     private String password;
+
+    @NotNull(message = "Subscription plan is required")
+    private PlanName subscriptionPlan;
 }

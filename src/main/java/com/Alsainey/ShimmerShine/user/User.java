@@ -1,5 +1,7 @@
 package com.Alsainey.ShimmerShine.user;
 
+import com.Alsainey.ShimmerShine.entities.subscription.SubscriptionPlan;
+import com.Alsainey.ShimmerShine.entities.subscription.enums.PlanName;
 import com.Alsainey.ShimmerShine.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,28 +27,38 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-public class User implements UserDetails, Principal{
+public class User implements UserDetails, Principal {
+
     @Id
-    @GeneratedValue
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String firstname;
     private String lastname;
     private LocalDate dateOfBirth;
-    @Column(unique = true)
+
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String password;
+
     private boolean accountLocked;
     private boolean enabled;
+
+
+    @Enumerated(EnumType.STRING)
+    private PlanName subscriptionPlan;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
+
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
-
 
     @Override
     public String getName() {
@@ -65,11 +77,11 @@ public class User implements UserDetails, Principal{
     public String getUsername() {
         return email;
     }
+
     @Override
     public String getPassword() {
         return password;
     }
-
 
     @Override
     public boolean isAccountNonExpired() {
@@ -85,15 +97,13 @@ public class User implements UserDetails, Principal{
     public boolean isCredentialsNonExpired() {
         return true;
     }
+
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
-
-
     public String getFullName() {
         return firstname + " " + lastname;
     }
-
 }

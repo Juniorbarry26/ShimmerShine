@@ -1,4 +1,4 @@
-package com.Alsainey.ShimmerShine.entities.dtos;
+package com.Alsainey.ShimmerShine.entities.car.dtos;
 import lombok.Builder;
 import lombok.Data;
 

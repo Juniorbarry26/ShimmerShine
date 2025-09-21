@@ -1,4 +1,4 @@
-package com.Alsainey.ShimmerShine.entities;
+package com.Alsainey.ShimmerShine.entities.car;
 
 import com.Alsainey.ShimmerShine.user.User;
 import jakarta.persistence.*;

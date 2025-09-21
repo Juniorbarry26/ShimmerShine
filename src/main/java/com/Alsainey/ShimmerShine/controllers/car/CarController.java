@@ -1,9 +1,9 @@
-package com.Alsainey.ShimmerShine.controllers;
+package com.Alsainey.ShimmerShine.controllers.car;
 
-import com.Alsainey.ShimmerShine.entities.Car;
-import com.Alsainey.ShimmerShine.entities.dtos.CarRequest;
-import com.Alsainey.ShimmerShine.entities.dtos.CarUpdateRequest;
-import com.Alsainey.ShimmerShine.services.CarService;
+import com.Alsainey.ShimmerShine.entities.car.Car;
+import com.Alsainey.ShimmerShine.entities.car.dtos.CarRequest;
+import com.Alsainey.ShimmerShine.entities.car.dtos.CarUpdateRequest;
+import com.Alsainey.ShimmerShine.services.car.CarService;
 import com.Alsainey.ShimmerShine.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +27,7 @@ public class CarController {
             summary = "Add a new car for a user",
             description = "Registers a new car to the authenticated user. License plate must be unique."
     )
-    @PostMapping("/user/{userId}")
+    @PostMapping("/user")
     public ResponseEntity<?> addCar(@Valid @RequestBody CarRequest carRequest,
                                     @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(carService.addCar(user, carRequest));
@@ -37,7 +37,7 @@ public class CarController {
     @Operation(summary = "Update an existing car",
             description = "Updates only the fields provided in the request. Car must belong to the authenticated user.")
     @PutMapping("/{carId}")
-    public ResponseEntity<Car> updateCar(@PathVariable Integer carId,
+    public ResponseEntity<Car> updateCar(@PathVariable Long carId,
                                          @Valid @RequestBody CarUpdateRequest carUpdateRequest,
                                          @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(carService.updateCar(carId, carUpdateRequest, user));
@@ -51,7 +51,7 @@ public class CarController {
 
     @Operation(summary = "Get a car by its ID")
     @GetMapping("/{carId}")
-    public ResponseEntity<Car> getCarById(@PathVariable Integer carId,
+    public ResponseEntity<Car> getCarById(@PathVariable Long carId,
                                           @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(carService.getCarById(carId, user));
     }
@@ -59,7 +59,7 @@ public class CarController {
     @Operation(summary = "Delete a car",
             description = "Deletes a car only if it belongs to the authenticated user.")
     @DeleteMapping("/{carId}")
-    public ResponseEntity<Void> deleteCar(@PathVariable Integer carId,
+    public ResponseEntity<Void> deleteCar(@PathVariable Long carId,
                                           @AuthenticationPrincipal User user) {
         carService.deleteCar(carId, user);
         return ResponseEntity.noContent().build();

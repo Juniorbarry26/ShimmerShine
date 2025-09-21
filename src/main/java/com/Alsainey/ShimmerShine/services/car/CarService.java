@@ -1,9 +1,9 @@
-package com.Alsainey.ShimmerShine.services;
+package com.Alsainey.ShimmerShine.services.car;
 
-import com.Alsainey.ShimmerShine.entities.Car;
-import com.Alsainey.ShimmerShine.entities.dtos.CarRequest;
-import com.Alsainey.ShimmerShine.entities.dtos.CarUpdateRequest;
-import com.Alsainey.ShimmerShine.repositories.CarRepository;
+import com.Alsainey.ShimmerShine.entities.car.Car;
+import com.Alsainey.ShimmerShine.entities.car.dtos.CarRequest;
+import com.Alsainey.ShimmerShine.entities.car.dtos.CarUpdateRequest;
+import com.Alsainey.ShimmerShine.repositories.car.CarRepository;
 import com.Alsainey.ShimmerShine.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,14 +41,15 @@ public class CarService {
                 .user(currentUser)
                 .build();
 
-        if (newCar.getYear() > 4) {
+        int year = newCar.getYear();
+        if (year < 1000 || year > 9999) {
             throw new IllegalArgumentException("Year must be a 4-digit number");
         }
         return carRepository.save(newCar);
     }
 
     // Update an existing car
-    public Car updateCar(Integer carId, CarUpdateRequest carUpdateRequest, User currentUser) {
+    public Car updateCar(Long carId, CarUpdateRequest carUpdateRequest, User currentUser) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car not found!"));
 
@@ -68,7 +69,7 @@ public class CarService {
     }
 
     // Get a car by ID
-    public Car getCarById(Integer carId, User currentUser) {
+    public Car getCarById(Long carId, User currentUser) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car not found!"));
 
@@ -85,7 +86,7 @@ public class CarService {
     }
 
     // Delete a car
-    public void deleteCar(Integer carId, User currentUser) {
+    public void deleteCar(Long carId, User currentUser) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car not found!"));
 

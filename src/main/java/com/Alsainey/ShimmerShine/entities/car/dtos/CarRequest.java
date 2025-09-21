@@ -1,4 +1,4 @@
-package com.Alsainey.ShimmerShine.entities.dtos;
+package com.Alsainey.ShimmerShine.entities.car.dtos;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
