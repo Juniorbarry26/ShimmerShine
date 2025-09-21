@@ -2,12 +2,15 @@ package com.Alsainey.ShimmerShine.auth;
 
 import com.Alsainey.ShimmerShine.email.EmailService;
 import com.Alsainey.ShimmerShine.email.EmailTemplateName;
+import com.Alsainey.ShimmerShine.entities.subscription.enums.PlanName;
+import com.Alsainey.ShimmerShine.role.Role;
 import com.Alsainey.ShimmerShine.role.RoleRepository;
 import com.Alsainey.ShimmerShine.security.JwtService;
 import com.Alsainey.ShimmerShine.user.Token;
 import com.Alsainey.ShimmerShine.user.TokenRepository;
 import com.Alsainey.ShimmerShine.user.User;
 import com.Alsainey.ShimmerShine.user.UserRepository;
+import com.Alsainey.ShimmerShine.user.dto.UserResponse;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,20 +36,23 @@ public class AuthenticationService {
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
 
-
     // register a user
     @Value("${application.mailing.frontend.activation-url}")
     private String activation_url;
-    public void register(RegistrationRequest request) throws MessagingException {
+
+    public UserResponse register(RegistrationRequest request) throws MessagingException {
         var userRole = roleRepository.findByName("USER")
-                // todo -> better exception handling
-                .orElseThrow(() -> new IllegalStateException("User role was not initialize."));
+                .orElseThrow(() -> new IllegalStateException("User role was not initialized."));
+
+        // no DB lookup, directly use enum
+        PlanName plan = request.getSubscriptionPlan();
 
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .subscriptionPlan(plan)   // enum saved as string in DB
                 .accountLocked(false)
                 .enabled(false)
                 .roles(List.of(userRole))
@@ -55,7 +61,18 @@ public class AuthenticationService {
         userRepository.save(user);
         sendValidationEmail(user);
 
+        // Return safe user response
+        return UserResponse.builder()
+                .id(user.getId())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .email(user.getEmail())
+                .subscriptionPlan(user.getSubscriptionPlan())
+                .enabled(user.isEnabled())
+                .build();
     }
+
+
     // send a validation email
     public void sendValidationEmail(User user) throws MessagingException {
         var newToken = generateActivationToken(user);
@@ -71,9 +88,7 @@ public class AuthenticationService {
     }
 
     // Generate activation token from user
-
     private String generateActivationToken(User user) {
-
         String generatedToken = generateActivationCode(6);
 
         var token = Token.builder()
@@ -99,6 +114,8 @@ public class AuthenticationService {
 
         return stringBuilder.toString();
     }
+
+    // Authenticate response
     // Authenticate response
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var auth = authenticationManager.authenticate(
@@ -108,24 +125,40 @@ public class AuthenticationService {
                 )
         );
 
-        var claims = new HashMap<String, Object>();
-        var user = ((User) auth.getPrincipal());
-        claims.put("fullName", user.getFullName());
+        var user = (User) auth.getPrincipal();
 
-        var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
+        // Add claims to token
+        var claims = new HashMap<String, Object>();
+        claims.put("fullName", user.getFullName());
+        claims.put("plan", user.getSubscriptionPlan().name());
+
+        var jwtToken = jwtService.generateToken(claims, user);
+
+        var userResponse = UserAuthResponse.builder()
+                .id(user.getId())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .email(user.getEmail())
+                .subscriptionPlan(user.getSubscriptionPlan())
+//                .role((Role) user.getRoles().stream().toList())
+                .createdDate(user.getCreatedDate())
+                .lastModifiedDate(user.getLastModifiedDate())
+                .build();
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .user(userResponse)
                 .build();
     }
 
-    // Activate account
+
+    // Activate an account
     public void activateAccount(String token) throws MessagingException {
         var savedToken = tokenRepository.findByToken(token)
-                // todo -> better exception handling
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
+
         if (LocalDateTime.now().isAfter(savedToken.getExpiredAt())) {
             sendValidationEmail(savedToken.getUser());
-            throw new RuntimeException("Activation token has expired. A new Activation token has been send to the same email address");
+            throw new RuntimeException("Activation token has expired. A new Activation token has been sent.");
         }
 
         var user = userRepository.findById(savedToken.getUser().getId())
@@ -136,7 +169,4 @@ public class AuthenticationService {
         savedToken.setValidatedAt(LocalDateTime.now());
         tokenRepository.save(savedToken);
     }
-
-    // login to your account
-
 }
