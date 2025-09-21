@@ -51,7 +51,7 @@ This project is built with **Spring Boot (backend)** and **Angular (frontend)**,
 - Java 17+  
 - Node.js & npm  
 - PostgreSQL  
-- Docker (optional)  
+- Docker  
 
 ### Backend Setup  
 ```bash
