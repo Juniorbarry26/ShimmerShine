@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("subscriptions")
 @RequiredArgsConstructor
@@ -68,7 +70,7 @@ public class SubscriptionController {
     @PutMapping("/cancel")
     public ResponseEntity<String> cancelSubscription(
             @Parameter(description = "ID of the subscription to cancel")
-            @RequestParam Long subscriptionId) {
+            @RequestParam UUID subscriptionId) {
 
         subscriptionService.cancelSubscription(subscriptionId);
         return ResponseEntity.ok("Subscription canceled successfully");

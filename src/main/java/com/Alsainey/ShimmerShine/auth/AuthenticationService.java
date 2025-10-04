@@ -114,8 +114,6 @@ public class AuthenticationService {
 
         return stringBuilder.toString();
     }
-
-    // Authenticate response
     // Authenticate response
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var auth = authenticationManager.authenticate(

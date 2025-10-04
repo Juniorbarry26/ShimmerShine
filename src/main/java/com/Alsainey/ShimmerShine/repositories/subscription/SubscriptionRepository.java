@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
+public interface SubscriptionRepository extends JpaRepository<Subscription, UUID> {
 
     // Find active subscription for a user
     @Query("SELECT s FROM Subscription s " +
@@ -20,5 +21,5 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     List<Subscription> findAllActive();
 
     // Find all subscriptions for a user (history)
-    List<Subscription> findByUserId(Long userId);
+    List<Subscription> findByUserId(UUID userId);
 }
