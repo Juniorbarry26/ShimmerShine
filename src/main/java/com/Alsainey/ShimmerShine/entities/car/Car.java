@@ -3,24 +3,27 @@ package com.Alsainey.ShimmerShine.entities.car;
 import com.Alsainey.ShimmerShine.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.UUID;
 
 @Entity
-@Table(name = "cars", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "licensePlate")
-})
+@Table(name = "cars")
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Car {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
+    private UUID id;
 
-
-    @ManyToOne(fetch = FetchType.EAGER) // Many cars can belong to one user
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY) // Many cars can belong to one user
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "uuid")
     private User user;
 
     @Column(nullable = false, unique = true)
@@ -33,10 +36,6 @@ public class Car {
     private String model;
 
     private String color;
-
     private Integer year;
-
-
     private String nickname;
-
 }

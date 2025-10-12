@@ -6,13 +6,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface CarRepository extends JpaRepository<Car, Long> {
+public interface CarRepository extends JpaRepository<Car, UUID> {
 
     // Find a car by its license plate
     Optional<Car> findByLicensePlate(String licensePlate);
 
     // Find all cars belonging to a specific user
-    List<Car> findAllByUserId(Long userId);
+    List<Car> findAllByUserId(UUID userId);
 }

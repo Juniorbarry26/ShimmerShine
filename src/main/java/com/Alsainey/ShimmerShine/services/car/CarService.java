@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class CarService {
     }
 
     // Update an existing car
-    public Car updateCar(Long carId, CarUpdateRequest carUpdateRequest, User currentUser) {
+    public Car updateCar(UUID carId, CarUpdateRequest carUpdateRequest, User currentUser) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car not found!"));
 
@@ -69,7 +70,7 @@ public class CarService {
     }
 
     // Get a car by ID
-    public Car getCarById(Long carId, User currentUser) {
+    public Car getCarById(UUID carId, User currentUser) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car not found!"));
 
@@ -86,7 +87,7 @@ public class CarService {
     }
 
     // Delete a car
-    public void deleteCar(Long carId, User currentUser) {
+    public void deleteCar(UUID carId, User currentUser) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException("Car not found!"));
 

@@ -1,10 +1,10 @@
 package com.Alsainey.ShimmerShine.user;
 
-import com.Alsainey.ShimmerShine.entities.subscription.SubscriptionPlan;
 import com.Alsainey.ShimmerShine.entities.subscription.enums.PlanName;
 import com.Alsainey.ShimmerShine.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
@@ -30,8 +31,10 @@ import java.util.stream.Collectors;
 public class User implements UserDetails, Principal {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
+    private UUID id;
 
     private String firstname;
     private String lastname;
@@ -45,13 +48,12 @@ public class User implements UserDetails, Principal {
     private boolean accountLocked;
     private boolean enabled;
 
-
     @Enumerated(EnumType.STRING)
     private PlanName subscriptionPlan;
 
-
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;

@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/cars")
@@ -37,7 +38,7 @@ public class CarController {
     @Operation(summary = "Update an existing car",
             description = "Updates only the fields provided in the request. Car must belong to the authenticated user.")
     @PutMapping("/{carId}")
-    public ResponseEntity<Car> updateCar(@PathVariable Long carId,
+    public ResponseEntity<Car> updateCar(@PathVariable UUID carId,
                                          @Valid @RequestBody CarUpdateRequest carUpdateRequest,
                                          @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(carService.updateCar(carId, carUpdateRequest, user));
@@ -51,7 +52,7 @@ public class CarController {
 
     @Operation(summary = "Get a car by its ID")
     @GetMapping("/{carId}")
-    public ResponseEntity<Car> getCarById(@PathVariable Long carId,
+    public ResponseEntity<Car> getCarById(@PathVariable UUID carId,
                                           @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(carService.getCarById(carId, user));
     }
@@ -59,7 +60,7 @@ public class CarController {
     @Operation(summary = "Delete a car",
             description = "Deletes a car only if it belongs to the authenticated user.")
     @DeleteMapping("/{carId}")
-    public ResponseEntity<Void> deleteCar(@PathVariable Long carId,
+    public ResponseEntity<Void> deleteCar(@PathVariable UUID carId,
                                           @AuthenticationPrincipal User user) {
         carService.deleteCar(carId, user);
         return ResponseEntity.noContent().build();
