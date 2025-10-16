@@ -2,7 +2,7 @@ spring:
   application:
     name: ShimmerShine
   profiles:
-    active: dev  # ✅ Correct key here
+    active: dev
   servlet:
     multipart:
       max-file-size: 50MB
