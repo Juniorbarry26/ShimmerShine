@@ -23,16 +23,6 @@ public class OpenApiConfig {
                                 .name("Alsainey Barry")
                                 .email("alsainey7@gmail.com")
                         )
-                )
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(new Components()
-                        .addSecuritySchemes("bearerAuth",
-                                new SecurityScheme()
-                                        .name("bearerAuth")
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
-                        )
                 );
     }
 }
