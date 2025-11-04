@@ -33,7 +33,7 @@ This project is built with **Spring Boot (backend)** and **Angular (frontend)**,
 - JPA/Hibernate (PostgreSQL)  
 
 **Frontend**  
-- Angular 16  
+- Angular 19  
 - TailwindCSS (styling)  
 - ShadCN/UI Components  
 - Responsive & Mobile-first design  
