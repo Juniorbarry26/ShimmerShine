@@ -4,18 +4,33 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
   jpa:
     hibernate:
       ddl-auto: create-drop
     show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
 
-# Disable mail during tests
-spring.mail.host: localhost
-spring.mail.port: 2525
-spring.mail.username:
-spring.mail.password:
+  mail:
+    host: localhost
+    port: 2525
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+          auth: false
+          starttls:
+            enable: false
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
 
-# Disable your custom JWT, etc.
 application:
   security:
     jwt:
