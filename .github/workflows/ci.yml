@@ -34,8 +34,20 @@ jobs:
       - name: Verify Maven
         run: mvn -v
 
+      #Run tests using in-memory DB + dummy env vars
       - name: Build and Run Tests
-        run: mvn clean verify
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD:
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          APPLICATION_SECURITY_JWT_SECRET_KEY: dummy_secret
+          APPLICATION_SECURITY_JWT_EXPIRATION: 3600000
+          SPRING_MAIL_HOST: localhost
+          SPRING_MAIL_PORT: 2525
+        run: mvn clean verify -Dspring.profiles.active=test
 
       - name: Package Application (Skip tests for faster artifact build)
         run: mvn clean package -DskipTests
