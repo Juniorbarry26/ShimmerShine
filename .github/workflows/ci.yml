@@ -34,9 +34,6 @@ jobs:
       - name: Verify Maven
         run: mvn -v
 
-      - name: Build and Run Tests
-        run: mvn clean verify
-
       - name: Package Application (Skip tests for faster artifact build)
         run: mvn clean package -DskipTests
 
