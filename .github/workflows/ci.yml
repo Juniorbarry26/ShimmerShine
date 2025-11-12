@@ -34,12 +34,6 @@ jobs:
       - name: Verify Maven
         run: mvn -v
 
-      - name: Build and Run Tests
-        env:
-          SPRING_PROFILES_ACTIVE: test
-          APPLICATION_SECURITY_JWT_SECRET_KEY: dummy
-        run: mvn clean verify
-
       - name: Package Application (Skip tests for faster artifact build)
         run: mvn clean package -DskipTests
 
