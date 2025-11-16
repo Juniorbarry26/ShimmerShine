@@ -1,0 +1,39 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - "v*"     # Triggers when you push a tag like v1.0.0
+
+jobs:
+  release:
+    name: Build & Publish Release Artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Set up Java JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: "corretto"
+
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build Application JAR
+        run: mvn clean package -DskipTests
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
