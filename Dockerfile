@@ -24,5 +24,8 @@ ENV SPRING_PROFILES_ACTIVE=prod \
 # Expose port
 EXPOSE 8080
 
+# Create and use a non-privileged user for better security
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring
 # Run the app
 ENTRYPOINT ["java", "-jar", "app.jar"]
