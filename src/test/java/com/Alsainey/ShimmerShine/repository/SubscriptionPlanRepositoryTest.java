@@ -82,7 +82,7 @@ class SubscriptionPlanRepositoryTest {
         SubscriptionPlan plan = SubscriptionPlan.builder()
                 .name(PlanName.BASIC)
                 .maxCarWash(30)
-                .description("Pro plan")
+                .description("Basic plan")
                 .price(BigDecimal.valueOf(1500))
                 .build();
 

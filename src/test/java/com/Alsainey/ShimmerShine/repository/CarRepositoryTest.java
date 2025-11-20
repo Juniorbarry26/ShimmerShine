@@ -93,19 +93,6 @@ class CarRepositoryTest {
         assertThat(foundCar.get().getMake()).isEqualTo("Toyota");
     }
 
-
-//    @Test
-//    void shouldFindAllCars() {
-//
-//        carRepository.save(buildCar("BJL2001A", "Toyota", "Corolla"));
-//        carRepository.save(buildCar("BJL2002A", "Honda", "Civic"));
-//
-//        List<Car> allCars = carRepository.findAll();
-//
-//        assertThat(allCars.size()).isEqualTo(2);
-//    }
-
-
     @Test
     void shouldUpdateCar() {
 
