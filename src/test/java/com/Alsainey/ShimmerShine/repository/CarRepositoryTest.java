@@ -6,6 +6,7 @@ import com.Alsainey.ShimmerShine.role.Role;
 import com.Alsainey.ShimmerShine.role.RoleRepository;
 import com.Alsainey.ShimmerShine.user.User;
 import com.Alsainey.ShimmerShine.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
@@ -13,7 +14,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,41 +33,90 @@ class CarRepositoryTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    @Test
-    void shouldSaveCar() {
+    private User savedUser;
 
-        Role role = Role.builder()
-                .name("ROLE_USER")
-                .build();
-        roleRepository.save(role);
+    @BeforeEach
+    void setup() {
 
-        User user = User.builder()
-                .firstname("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .enabled(true)
-                .accountLocked(false)
-                .roles(List.of(role))
-                .build();
+        Role role = roleRepository.save(
+                Role.builder().name("ROLE_USER").build()
+        );
 
-        User savedUser = userRepository.save(user);
+        List<Role> roles = new ArrayList<>();
+        roles.add(role);
 
-        Car car = Car.builder()
+        savedUser = userRepository.save(
+                User.builder()
+                        .firstname("Test")
+                        .lastname("User")
+                        .email("test@example.com")
+                        .password("password")
+                        .dateOfBirth(LocalDate.of(2000, 1, 1))
+                        .enabled(true)
+                        .accountLocked(false)
+                        .roles(roles)
+                        .build()
+        );
+    }
+
+    private Car buildCar(String plate, String make, String model) {
+        return Car.builder()
                 .user(savedUser)
-                .licensePlate("BJL2002A")
-                .make("Chevrolet")
-                .model("Corvette")
+                .licensePlate(plate)
+                .make(make)
+                .model(model)
                 .year(2020)
-                .nickname("Demon")
+                .nickname("TestCar")
                 .build();
+    }
+
+
+    @Test
+    void shouldCreateCar() {
+        Car car = buildCar("BJL1000A", "Chevrolet", "Corvette");
 
         Car savedCar = carRepository.save(car);
 
-        assertThat(savedCar).isNotNull();
         assertThat(savedCar.getId()).isNotNull();
-        assertThat(savedCar.getLicensePlate()).isEqualTo("BJL2002A");
-        assertThat(savedCar.getUser().getEmail()).isEqualTo("test@example.com");
+        assertThat(savedCar.getLicensePlate()).isEqualTo("BJL1000A");
+    }
+
+
+    @Test
+    void shouldFindCarById() {
+
+        Car car = carRepository.save(buildCar("BJL2000A", "Toyota", "Camry"));
+
+        Optional<Car> foundCar = carRepository.findById(car.getId());
+
+        assertThat(foundCar).isPresent();
+        assertThat(foundCar.get().getMake()).isEqualTo("Toyota");
+    }
+
+    @Test
+    void shouldUpdateCar() {
+
+        Car car = carRepository.save(buildCar("BJL3000A", "Ford", "Mustang"));
+
+        car.setNickname("Beast");
+        car.setMake("Ford Updated");
+
+        Car updatedCar = carRepository.save(car);
+
+        assertThat(updatedCar.getNickname()).isEqualTo("Beast");
+        assertThat(updatedCar.getMake()).isEqualTo("Ford Updated");
+    }
+
+
+    @Test
+    void shouldDeleteCar() {
+
+        Car car = carRepository.save(buildCar("BJL4000A", "BMW", "M4"));
+
+        carRepository.delete(car);
+
+        Optional<Car> deletedCar = carRepository.findById(car.getId());
+
+        assertThat(deletedCar).isEmpty();
     }
 }
