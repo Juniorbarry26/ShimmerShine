@@ -15,7 +15,7 @@ FROM amazoncorretto:17-alpine
 WORKDIR /app
 
 # Copy JAR from builder
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/target/ShimmerShine-0.0.1*.jar app.jar
 
 # Set environment variables (can also override in docker-compose)
 ENV SPRING_PROFILES_ACTIVE=prod \
@@ -28,4 +28,4 @@ EXPOSE 8080
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring
 # Run the app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
