@@ -1,7 +1,6 @@
 package com.Alsainey.ShimmerShine.entities.car;
 
 import com.Alsainey.ShimmerShine.user.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
