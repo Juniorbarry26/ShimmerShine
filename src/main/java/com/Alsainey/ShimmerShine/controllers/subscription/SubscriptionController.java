@@ -26,69 +26,40 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
     private final UserRepository userRepository;
 
-    @Operation(summary = "Create a new subscription for the logged-in user")
+    @Operation(summary = "Change the logged-in user's subscription plan")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Subscription created successfully"),
-            @ApiResponse(responseCode = "404", description = "Plan not found")
-    })
-    @PostMapping("/create")
-    public ResponseEntity<Subscription> createSubscription(
-            @Parameter(description = "Plan to subscribe (BASIC, PREMIUM, ULTIMATE)")
-            @RequestParam PlanName planName,
-            Authentication authentication) {
-
-        User currentUser = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Subscription subscription = subscriptionService.createSubscription(currentUser, planName);
-        return ResponseEntity.ok(subscription);
-    }
-
-    @Operation(summary = "Change the logged-in user's active subscription plan")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Subscription changed successfully"),
-            @ApiResponse(responseCode = "404", description = "No active subscription found")
+    @ApiResponse(responseCode = "200", description = "Subscription changed successfully"),
+    @ApiResponse(responseCode = "404", description = "No active subscription found")
     })
     @PutMapping("/change")
-    public ResponseEntity<Subscription> changeSubscription(
-            @Parameter(description = "New plan to switch to (BASIC, PREMIUM, ULTIMATE)")
+    public ResponseEntity<User> changeSubscription(
             @RequestParam PlanName newPlanName,
-            Authentication authentication) {
-
+            Authentication authentication
+    ) {
         User currentUser = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Subscription subscription = subscriptionService.changeSubscription(currentUser, newPlanName);
-        return ResponseEntity.ok(subscription);
+        User updatedUser = subscriptionService.changeSubscription(currentUser, newPlanName);
+
+        return ResponseEntity.ok(updatedUser);
     }
+//
+//    @Operation(summary = "Use a car wash for the logged-in user's active subscription")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Car wash used successfully"),
+//            @ApiResponse(responseCode = "404", description = "No active subscription found"),
+//            @ApiResponse(responseCode = "400", description = "No washes remaining")
+//    })
+//    @PostMapping("/use")
+//    public ResponseEntity<String> useCarWash(Authentication authentication) {
+//
+//        User currentUser = userRepository.findByEmail(authentication.getName())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        subscriptionService.useCarWash(currentUser);
+//        return ResponseEntity.ok("Car wash used successfully");
+//    }
 
-    @Operation(summary = "Cancel an active subscription by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Subscription canceled successfully"),
-            @ApiResponse(responseCode = "404", description = "Subscription not found")
-    })
-    @PutMapping("/cancel")
-    public ResponseEntity<String> cancelSubscription(
-            @Parameter(description = "ID of the subscription to cancel")
-            @RequestParam UUID subscriptionId) {
 
-        subscriptionService.cancelSubscription(subscriptionId);
-        return ResponseEntity.ok("Subscription canceled successfully");
-    }
 
-    @Operation(summary = "Use a car wash for the logged-in user's active subscription")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Car wash used successfully"),
-            @ApiResponse(responseCode = "404", description = "No active subscription found"),
-            @ApiResponse(responseCode = "400", description = "No washes remaining")
-    })
-    @PostMapping("/use")
-    public ResponseEntity<String> useCarWash(Authentication authentication) {
-
-        User currentUser = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        subscriptionService.useCarWash(currentUser);
-        return ResponseEntity.ok("Car wash used successfully");
-    }
 }
