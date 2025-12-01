@@ -2,7 +2,11 @@ package com.Alsainey.ShimmerShine.auth;
 
 import com.Alsainey.ShimmerShine.email.EmailService;
 import com.Alsainey.ShimmerShine.email.EmailTemplateName;
-import com.Alsainey.ShimmerShine.entities.subscription.enums.PlanName;
+import com.Alsainey.ShimmerShine.entities.subscription.Subscription;
+import com.Alsainey.ShimmerShine.entities.subscription.SubscriptionPlan;
+import com.Alsainey.ShimmerShine.entities.subscription.enums.SubscriptionStatus;
+import com.Alsainey.ShimmerShine.repositories.subscription.SubscriptionPlanRepository;
+import com.Alsainey.ShimmerShine.repositories.subscription.SubscriptionRepository;
 import com.Alsainey.ShimmerShine.role.Role;
 import com.Alsainey.ShimmerShine.role.RoleRepository;
 import com.Alsainey.ShimmerShine.security.JwtService;
@@ -21,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -35,40 +40,54 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
+    private final SubscriptionPlanRepository subscriptionPlanRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     // register a user
     @Value("${application.mailing.frontend.activation-url}")
     private String activation_url;
 
     public UserResponse register(RegistrationRequest request) throws MessagingException {
-        var userRole = roleRepository.findByName("USER")
+
+        Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new IllegalStateException("User role was not initialized."));
-
-        // no DB lookup, directly use enum
-        PlanName plan = request.getSubscriptionPlan();
-
-        var user = User.builder()
+        SubscriptionPlan plan = subscriptionPlanRepository.findByName(request.getSubscriptionPlan())
+                .orElseThrow(() -> new IllegalStateException("Subscription plan not found"));
+        User user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .subscriptionPlan(plan)   // enum saved as string in DB
                 .accountLocked(false)
                 .enabled(false)
                 .roles(List.of(userRole))
+                .subscriptionPlan(plan)
                 .build();
 
-        userRepository.save(user);
-        sendValidationEmail(user);
 
-        // Return safe user response
+        User savedUser = userRepository.save(user);
+
+        Subscription subscription = Subscription.builder()
+                .user(savedUser)
+                .subscriptionPlan(plan)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusMonths(1)) // 1-month default
+                .status(SubscriptionStatus.ACTIVE)
+                .remainingWashes(plan.getMaxCarWash())
+                .build();
+
+        subscriptionRepository.save(subscription);
+
+        sendValidationEmail(savedUser);
+
+        // Return safe UserResponse DTO
         return UserResponse.builder()
-                .id(user.getId())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .email(user.getEmail())
-                .subscriptionPlan(user.getSubscriptionPlan())
-                .enabled(user.isEnabled())
+                .id(savedUser.getId())
+                .firstname(savedUser.getFirstname())
+                .lastname(savedUser.getLastname())
+                .email(savedUser.getEmail())
+                .subscriptionPlan(savedUser.getSubscriptionPlan().getName())
+                .enabled(savedUser.isEnabled())
                 .build();
     }
 
@@ -125,29 +144,36 @@ public class AuthenticationService {
 
         var user = (User) auth.getPrincipal();
 
-        // Add claims to token
+
         var claims = new HashMap<String, Object>();
         claims.put("fullName", user.getFullName());
-        claims.put("plan", user.getSubscriptionPlan().name());
+        claims.put("plan", user.getSubscriptionPlan().getName());
 
         var jwtToken = jwtService.generateToken(claims, user);
+        var roles = user.getRoles().stream()
+                .map(role -> roleRepository.findById(role.getId())
+                        .orElseThrow(() -> new RuntimeException("Role not found")))
+                .map(Role::getName)
+                .toList();
+
 
         var userResponse = UserAuthResponse.builder()
                 .id(user.getId())
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
                 .email(user.getEmail())
-                .subscriptionPlan(user.getSubscriptionPlan())
-//                .role((Role) user.getRoles().stream().toList())
+                .subscriptionPlan(user.getSubscriptionPlan().getName())
+                .roles(roles)
                 .createdDate(user.getCreatedDate())
                 .lastModifiedDate(user.getLastModifiedDate())
                 .build();
+
+
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .user(userResponse)
                 .build();
     }
-
 
     // Activate an account
     public void activateAccount(String token) throws MessagingException {

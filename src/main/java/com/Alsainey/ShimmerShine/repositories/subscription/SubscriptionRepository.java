@@ -22,4 +22,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
 
     // Find all subscriptions for a user (history)
     List<Subscription> findByUserId(UUID userId);
+
+    @Query("SELECT s FROM Subscription s WHERE s.user.id = :userId AND s.status = 'ACTIVE'")
+    Optional<Subscription> findActiveSubscriptionByUser(UUID userId);
 }
