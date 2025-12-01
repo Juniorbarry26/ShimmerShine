@@ -1,6 +1,6 @@
 package com.Alsainey.ShimmerShine.user;
 
-import com.Alsainey.ShimmerShine.entities.subscription.enums.PlanName;
+import com.Alsainey.ShimmerShine.entities.subscription.SubscriptionPlan;
 import com.Alsainey.ShimmerShine.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,8 +48,9 @@ public class User implements UserDetails, Principal {
     private boolean accountLocked;
     private boolean enabled;
 
-    @Enumerated(EnumType.STRING)
-    private PlanName subscriptionPlan;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "plan_id")
+    private SubscriptionPlan subscriptionPlan;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
