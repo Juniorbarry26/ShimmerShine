@@ -44,6 +44,8 @@ public class User implements UserDetails, Principal {
     private String email;
 
     private String password;
+    private String phoneNumber;
+    private String profilePicture;
 
     private boolean accountLocked;
     private boolean enabled;
