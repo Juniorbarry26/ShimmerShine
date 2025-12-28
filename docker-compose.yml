@@ -15,7 +15,7 @@ services:
       - spring-demo
     restart: unless-stopped
   mail-dev:
-    container_name: mail-dev-bsn
+    container_name: mail-dev-shs
     image: maildev/maildev
     ports:
       - 1080:1080
