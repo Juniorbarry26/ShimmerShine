@@ -1,10 +1,13 @@
-package com.Alsainey.ShimmerShine.entities.employee;
+package com.Alsainey.ShimmerShine.admin.employees.entities;
 
+import com.Alsainey.ShimmerShine.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,6 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity(name = "employees")
+@EntityListeners(AuditingEntityListener.class)
 public class Employee {
 
     @Id
@@ -29,7 +33,7 @@ public class Employee {
     private String email;
     private String position;
     private String location;
-    private Integer phoneNumber;
+    private String phoneNumber;
     private LocalDate startDate;
 
     @Enumerated(EnumType.STRING)
@@ -38,11 +42,11 @@ public class Employee {
     private BigDecimal salary;
 
     @CreatedDate
-    @Column(nullable = false, insertable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDate createdAt;
 
     @LastModifiedDate
-    @Column(insertable = false)
+    @Column(nullable = false)
     private LocalDate updatedAt;
 
 }

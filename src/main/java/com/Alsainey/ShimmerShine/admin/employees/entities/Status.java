@@ -1,4 +1,4 @@
-package com.Alsainey.ShimmerShine.entities.employee;
+package com.Alsainey.ShimmerShine.admin.employees.entities;
 
 public enum Status {
     TRAINING,

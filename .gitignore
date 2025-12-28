@@ -54,6 +54,7 @@ build/
 # VS Code
 # =========================
 .vscode/
+.env
 
 # =========================
 # OS-specific files
