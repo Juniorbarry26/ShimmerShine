@@ -1,6 +1,7 @@
 package com.Alsainey.ShimmerShine.entities.car;
 
 import com.Alsainey.ShimmerShine.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,6 +24,7 @@ public class Car {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY) // Many cars can belong to one user
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "user_id", nullable = false, columnDefinition = "uuid")
     private User user;
 

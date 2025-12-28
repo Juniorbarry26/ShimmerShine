@@ -36,24 +36,4 @@ public class Role {
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
 }
