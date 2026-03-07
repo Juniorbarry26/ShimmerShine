@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/ShimmerShine
-    username: postgres
-    password: Avond778@
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -38,7 +38,7 @@ spring:
 application:
   security:
     jwt:
-      secret-key: JPzs6vvt9ObIYMmjSvZ49rEbtPG7UtSoPHcSEMisgW8
+      secret-key: ${JWT_SECRET_KEY}
       expiration: 86400000
   mailing:
     frontend:
